@@ -84,4 +84,20 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
 		return new RefreshTokenResponse(result.accessToken(), result.refreshToken(), "Bearer", 1800);
 	}
+	
+	@Override
+	@Transactional
+	public void logout(String rawRefreshToken) {
+
+		String tokenHash = tokenHashService.hashToken(rawRefreshToken);
+
+		refreshTokenRepository.findByTokenHashForUpdate(tokenHash).ifPresent(refreshToken -> {
+
+			if (refreshToken.getRevokedAt() == null) {
+				refreshToken.setRevokedAt(LocalDateTime.now(ZoneOffset.UTC));
+
+				refreshTokenRepository.save(refreshToken);
+			}
+		});
+	}
 }

@@ -8,4 +8,6 @@ public interface RefreshTokenService {
 	String createRefreshToken(User user);
 	
 	RefreshTokenResponse refresh(String rawRefreshToken);
+	
+	void logout(String rawRefreshToken);
 }

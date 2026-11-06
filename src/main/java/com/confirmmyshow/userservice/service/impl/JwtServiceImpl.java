@@ -18,15 +18,15 @@ public class JwtServiceImpl implements JwtService {
 	private final KeyPair keyPair;
 	private final String keyId;
 	private final long accessTokenExpiration;
-	
-	public JwtServiceImpl(KeyPair keyPair,@Value("${security.jwt.key-id}") String keyId,@Value("${security.jwt.access-token-expiration}") long accessTokenExpiration) {
+
+	public JwtServiceImpl(KeyPair keyPair, @Value("${security.jwt.key-id}") String keyId,
+			@Value("${security.jwt.access-token-expiration}") long accessTokenExpiration) {
 		this.keyPair = keyPair;
 		this.keyId = keyId;
 		this.accessTokenExpiration = accessTokenExpiration;
-		
+
 	}
-	
-	
+
 	/**
 	 * 1. Headers keyId.
 	 * 
@@ -38,24 +38,21 @@ public class JwtServiceImpl implements JwtService {
 	 * 
 	 * 5. Generate compact JWT token.
 	 * 
-	 * */ 
+	 */
 	@Override
 	public String generateAccessToken(String userId, String email, List<String> roles) {
 		Instant issuedAt = Instant.now();
 		Instant expiration = issuedAt.plusSeconds(accessTokenExpiration);
-		
-		return Jwts.builder()
-				.header()      // 1
+
+		return Jwts.builder().header() // 1
 				.keyId(keyId) // 1
-				.and()
-				.subject(userId)   // 2
-				.claim("email", email)  // 2
-				.claim("roles", roles)   // 2
-				.issuedAt(Date.from(issuedAt)) // 3 
+				.and().subject(userId) // 2
+				.claim("email", email) // 2
+				.claim("roles", roles) // 2
+				.issuedAt(Date.from(issuedAt)) // 3
 				.expiration(Date.from(expiration)) // 3
-				.signWith(keyPair.getPrivate(), Jwts.SIG.RS256) // 4  
-				.compact(); // 5 
+				.signWith(keyPair.getPrivate(), Jwts.SIG.RS256) // 4
+				.compact(); // 5
 	}
 
-	
 }
