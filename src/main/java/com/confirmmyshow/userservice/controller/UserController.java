@@ -1,5 +1,6 @@
 package com.confirmmyshow.userservice.controller;
 
+import com.confirmmyshow.userservice.dto.request.ChangePasswordRequest;
 import com.confirmmyshow.userservice.dto.request.UpdateUserProfileRequest;
 import com.confirmmyshow.userservice.dto.response.UserProfileResponse;
 import com.confirmmyshow.userservice.service.UserService;
@@ -35,5 +36,15 @@ public class UserController {
 		String userUuid = authentication.getName();
 
 		return ResponseEntity.ok(userService.updateMyProfile(userUuid, request));
+	}
+	
+	@PutMapping("/me/password")
+	public ResponseEntity<Void> changePassword(Authentication authentication,@Valid @RequestBody ChangePasswordRequest request) {
+
+		String userUuid = authentication.getName();
+
+		userService.changePassword(userUuid, request);
+
+		return ResponseEntity.noContent().build();
 	}
 }

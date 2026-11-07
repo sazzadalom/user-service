@@ -1,5 +1,6 @@
 package com.confirmmyshow.userservice.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,5 +62,16 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
             @Param("revokedAt") java.time.LocalDateTime revokedAt
     );
     
+    @Modifying(flushAutomatically = true)
+    @Query("""
+        UPDATE RefreshToken rt
+        SET rt.revokedAt = :revokedAt
+        WHERE rt.user.id = :userId
+          AND rt.revokedAt IS NULL
+    """)
+    int revokeAllActiveTokensByUserId(
+            @Param("userId") Long userId,
+            @Param("revokedAt") LocalDateTime revokedAt
+    );
     
 }
