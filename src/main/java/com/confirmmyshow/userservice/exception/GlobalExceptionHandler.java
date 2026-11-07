@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.confirmmyshow.userservice.constan.Constants;
+
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -143,5 +145,12 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
 
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,"INTERNAL_SERVER_ERROR","An unexpected error occurred",null);
+    }
+    
+    @ExceptionHandler(InvalidStatusTransitionException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidStatusTransition(
+    		InvalidStatusTransitionException ex) {
+
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,Constants.FAILED,ex.getMessage(),ex.getMessage());
     }
 }
