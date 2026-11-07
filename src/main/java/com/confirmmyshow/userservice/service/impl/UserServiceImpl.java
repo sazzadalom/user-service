@@ -1,5 +1,7 @@
 package com.confirmmyshow.userservice.service.impl;
 
+import com.confirmmyshow.userservice.constan.Constants.Message;
+import com.confirmmyshow.userservice.dto.internal.UserContactResponse;
 import com.confirmmyshow.userservice.dto.request.ChangePasswordRequest;
 import com.confirmmyshow.userservice.dto.request.UpdateUserProfileRequest;
 import com.confirmmyshow.userservice.dto.response.UserProfileResponse;
@@ -79,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
 	    // Verify the current password.
 	    if (!passwordEncoder.matches(request.currentPassword(),user.getPasswordHash())) {
-	        throw new InvalidCredentialsException("Invalid current password");
+	        throw new InvalidCredentialsException(Message.INVALID_USER_CREDENTIAL);
 	    }
 
 	    // Encode and save the new password.
@@ -89,5 +91,15 @@ public class UserServiceImpl implements UserService {
 
 	    // Revoke all active refresh tokens for this user.
 	    refreshTokenRepository.revokeAllActiveTokensByUserId(user.getId(),LocalDateTime.now(ZoneOffset.UTC));
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public UserContactResponse getUserContact(String userId) {
+
+		User user = userRepository.findByUserUuid(userId)
+				.orElseThrow(() -> new ResourceNotFoundException(Message.USER_ID_NOT_FOUNDED + userId));
+
+		return new UserContactResponse(user.getUserUuid(), user.getEmail(), user.getFullName());
 	}
 }

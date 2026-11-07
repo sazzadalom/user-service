@@ -3,7 +3,6 @@ package com.confirmmyshow.userservice.exception;
 
 import jakarta.validation.ConstraintViolationException;
 
-import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,6 @@ import com.confirmmyshow.userservice.constan.Constants;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.security.auth.login.AccountLockedException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

@@ -18,7 +18,7 @@ import com.confirmmyshow.userservice.dto.request.RegisterRequest;
 import com.confirmmyshow.userservice.dto.response.RegisterResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.confirmmyshow.userservice.exception.EmailAlreadyRegisteredException;
-
+import com.confirmmyshow.userservice.constan.Constants.Message;
 import com.confirmmyshow.userservice.dto.request.LoginRequest;
 import com.confirmmyshow.userservice.dto.response.LoginResponse;
 import com.confirmmyshow.userservice.enums.UserStatus;
@@ -98,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
 		LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
 		if (user.getStatus() == UserStatus.DISABLED) {
-			throw new InvalidCredentialsException("Invalid email or password");
+			throw new InvalidCredentialsException(Message.USER_ACCOUNT_DISABLE);
 		}
 
 		// Handle an existing account lock

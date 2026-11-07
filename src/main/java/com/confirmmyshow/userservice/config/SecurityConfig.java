@@ -20,79 +20,48 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter
-    ) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) throws Exception {
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+		http.csrf(csrf -> csrf.disable())
 
-            .formLogin(form -> form.disable())
+				.formLogin(form -> form.disable())
 
-            .httpBasic(basic -> basic.disable())
+				.httpBasic(basic -> basic.disable())
 
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(
-                            SessionCreationPolicy.STATELESS
-                    )
-            )
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .exceptionHandling(exception -> exception
-                    .authenticationEntryPoint((request, response, ex) ->
-                            response.sendError(
-                                    HttpServletResponse.SC_UNAUTHORIZED
-                            )
-                    )
-            )
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(
+						(request, response, ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
 
-            .authorizeHttpRequests(auth -> auth
+				.authorizeHttpRequests(auth -> auth
 
-                .requestMatchers(
-                        HttpMethod.POST,
-                        "/api/v1/auth/register",
-                        "/api/v1/auth/login",
-                        "/api/v1/auth/refresh",
-                        "/api/v1/auth/logout"
-                ).permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login",
+								"/api/v1/auth/refresh", "/api/v1/auth/logout")
+						.permitAll()
 
-                .requestMatchers(
-                        HttpMethod.GET,
-                        "/v3/api-docs/**",
-                        "/swagger-ui.html",
-                        "/swagger-ui/**"
-                ).permitAll()
+						.requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
+						.permitAll()
 
-                .requestMatchers("/.well-known/jwks.json")
-                .permitAll()
+						.requestMatchers("/.well-known/jwks.json").permitAll()
 
-                .requestMatchers("/api/v1/admin/**")
-                .hasRole("ADMIN")
-                
+						.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 
-                .requestMatchers("/api/v1/users/**")
-                .authenticated()
+						.requestMatchers("/api/v1/users/**").authenticated()
 
-                .requestMatchers("/internal/v1/**")
-                .denyAll()
+						.requestMatchers("/internal/v1/**").denyAll()
 
-                .anyRequest().denyAll()
-            )
+						.anyRequest().denyAll())
 
-            // Register JWT filter before username/password authentication.
-            .addFilterBefore(
-                    jwtAuthenticationFilter,
-                    UsernamePasswordAuthenticationFilter.class
-            );
+				// Register JWT filter before username/password authentication.
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+		return http.build();
+	}
 }
