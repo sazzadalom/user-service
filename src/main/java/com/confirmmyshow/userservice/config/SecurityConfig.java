@@ -76,6 +76,7 @@ public class SecurityConfig {
 
                 .requestMatchers("/api/v1/admin/**")
                 .hasRole("ADMIN")
+                
 
                 .requestMatchers("/api/v1/users/**")
                 .authenticated()
